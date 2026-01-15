@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Socket.io Test Track</title>
+    <script src="/socket.io/socket.io.min.js"></script>
+    <script src="/browser.min.js"></script>
+</head>
+<body>
+    <h1>Socket.io Test</h1>
+    <div id="status">Status: Disconnected</div>
+    <div id="messages">
+        <h3>Log:</h3>
+        <ul id="log-list"></ul>
+    </div>
+
+    <script>
+        const statusDiv = document.getElementById('status');
+        const logList = document.getElementById('log-list');
+
+        function addLog(msg) {
+            const li = document.createElement('li');
+            li.textContent = `${new Date().toLocaleTimeString()}: ${msg}`;
+            logList.appendChild(li);
+        }
+
+        const socket = io({
+            parser: SocketIOCompactParser
+        });
+
+        socket.on("connect", () => {
+            statusDiv.textContent = "Status: Connected!";
+            addLog("Connected to server. Sending ping...");
+            
+            socket.emit("ping", { message: "Hello from Browser!" });
+        });
+
+        socket.on("pong", (data) => {
+            addLog(`Received from server: ${data.message}`);
+        });
+
+        socket.on("disconnect", () => {
+            statusDiv.textContent = "Status: Disconnected";
+        });
+    </script>
+</body>
+</html>

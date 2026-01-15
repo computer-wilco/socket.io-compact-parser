@@ -1,0 +1,52 @@
+{
+  "name": "socket.io-compact-parser",
+  "version": "1.0.0",
+  "description": "A super efficient parser for socket.io",
+  "keywords": [
+    "socket.io",
+    "msgpack"
+  ],
+  "homepage": "https://github.com/computer-wilco/socket.io-compact-parser#readme",
+  "bugs": {
+    "url": "https://github.com/computer-wilco/socket.io-compact-parser/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/computer-wilco/socket.io-compact-parser.git"
+  },
+  "license": "MIT",
+  "author": "Wilco Joosen",
+  "type": "module",
+  "main": "dist/index.min.cjs",
+  "module": "dist/index.min.js",
+  "exports": {
+    ".": {
+      "browser": "./dist/browser.min.js",
+      "import": "./dist/index.min.js",
+      "require": "./dist/index.min.cjs"
+    }
+  },
+  "browser": {
+    "./dist/index.min.js": "./dist/browser.min.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "test:server": "cd test && node server.js",
+    "test:client": "cd test && node client.js",
+    "update": "npx -y Jelmerro/nus",
+    "build": "rollup -c"
+  },
+  "dependencies": {
+    "@socket.io/component-emitter": "3.1.2"
+  },
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "29.0.0",
+    "@rollup/plugin-node-resolve": "16.0.3",
+    "@rollup/plugin-replace": "6.0.3",
+    "@rollup/plugin-terser": "0.4.4",
+    "notepack.io": "3.0.1",
+    "rollup": "4.55.1",
+    "socket.io": "4.8.3",
+    "socket.io-client": "4.8.3"
+  }
+}
