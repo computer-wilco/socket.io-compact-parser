@@ -29,6 +29,23 @@ const isDataValid = (decoded) => {
 };
 
 /**
+ * Symbol table used to replace frequently occurring
+ * packet keys and standard string values with numeric identifiers.
+ *
+ * These symbols are protocol-stable and MUST NOT be reused.
+ * New symbols may only be appended.
+ *
+ * @type {Object<string, number>}
+ * @private
+ */
+const SYMBOLS = {
+  type: 0,
+  nsp: 1,
+  data: 2,
+  id: 3,
+};
+
+/**
  * The protocol version implemented by this parser.
  * @type {Number}
  */
@@ -57,7 +74,19 @@ export class Encoder {
    * @returns {Array<Buffer|Uint8Array>} An array containing the encoded packet.
    */
   encode(packet) {
-    return [notepack.encode(packet)];
+    return [notepack.encode(this.compressData(packet))];
+  }
+
+  /**
+   * Makes the packet more compact by replacing keys with symbols.
+   * @param {Object} data - The object to process.
+   * @returns {Object} - The processed object.
+   */
+  compressData(data) {
+    let compressed = Object.keys(SYMBOLS).map((sym) => {
+      return data[sym];
+    }).filter((value) => value !== undefined);
+    return compressed;
   }
 }
 
@@ -81,12 +110,29 @@ export class Decoder {
    */
   add(obj) {
     try {
-      const decoded = notepack.decode(obj);
+      let decoded = notepack.decode(obj);
+      decoded = this.decompressData(decoded);
       this.checkPacket(decoded);
       this.emit("decoded", decoded);
     } catch (e) {
       this.emit("error", e);
     }
+  }
+
+  /**
+   * Expands the packet by replacing symbols with their original keys.
+   * @param {Buffer|Uint8Array|ArrayBuffer} data - The object to process.
+   * @returns {Object} - The processed object.
+   */
+  decompressData(data) {
+    let uncompressed = {};
+    for (let i = 0; i < data.length; i++) {
+      const sym = Object.keys(SYMBOLS)[i];
+      if (data[i] !== undefined) {
+        uncompressed[sym] = data[i];
+      }
+    }
+    return uncompressed;
   }
 
   /**

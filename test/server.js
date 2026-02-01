@@ -36,10 +36,10 @@ const io = new Server(server, {
 
 io.on("connection", (socket) => {
   socket.on("ping", (data) => {
-    console.log("Get from client: ", data);
+    console.info("Get from client: ", data);
     socket.emit("pong", { message: "Hello from Server!" });
   });
 });
 
 server.listen(3000);
-console.log("Socket.io server running on port 3000");
+console.info("Socket.io server running on port 3000");

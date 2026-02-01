@@ -2,19 +2,26 @@
 
 A super efficient, high-performance binary parser for Socket.IO based on the MessagePack specification.
 
-This parser is designed to be a modern, lightweight replacement for the default JSON parser, significantly reducing the payload size of your real-time communication.
+This parser is designed to be a modern, lightweight replacement for the default JSON parser, significantly reducing the payload size of real-time Socket.IO communication while remaining fully protocol-compatible.
 
-## Current State & Roadmap
+## The Logic: Positional Compaction
+Instead of just shortening keys, this version maps `type`, `nsp`, `data`, and `id` to fixed array indices. By stripping keys entirely before encoding with `notepack.io`, overhead is reduced to the absolute physical minimum.
 
-**Current version:** 1.0.0
-- Fully implements the Socket.IO Parser API.
-- Powered by `notepack.io` for ultra-fast MessagePack encoding/decoding.
-- Bundles `@socket.io/component-emitter` for a seamless browser experience.
-- Supports both ES Modules (ESM) and CommonJS (CJS).
+## Performance (Latest Benchmarks)
 
-**Roadmap:**
-- [ ] Implementation of custom dictionary-based text compression to further reduce string overhead.
-- [ ] Integration with native browser CompressionStream API for large payloads.
+### Size (bytes)
+┌─────────┬──────────┬──────────┬──────────┬──────────┐
+│ (index) │ case     │ JSON     │ MsgPack  │ Compact  │
+├─────────┼──────────┼──────────┼──────────┼──────────┤
+│ 0       │ 'small'  │ 29       │ 36       │ 22       │
+│ 1       │ 'medium' │ 133      │ 111      │ 97       │
+│ 2       │ 'large'  │ 10697    │ 6921     │ 6907     │
+└─────────┴──────────┴──────────┴──────────┴──────────┘
+
+### Speed (Encoding)
+- Small: 0.465ms
+- Medium: 0.101ms
+- Large: 5.007ms
 
 ## Installation
 
@@ -24,7 +31,7 @@ npm install socket.io-compact-parser
 ```
 
 ### Browser (CDN)
-You can include the parser directly in your HTML via unpkg. It is bundled as a UMD module, making it available as a global variable.
+You can include the parser directly in your HTML via unpkg.
 
 ```html
 <script src="https://unpkg.com/socket.io-compact-parser/dist/browser.min.js"></script>
@@ -33,7 +40,7 @@ You can include the parser directly in your HTML via unpkg. It is bundled as a U
 ## Usage
 
 ### Node.js Server (ESM)
-```javascript
+```js
 import { Server } from "socket.io";
 import CompactParser from "socket.io-compact-parser";
 
@@ -43,7 +50,7 @@ const io = new Server(server, {
 ```
 
 ### Client (Module)
-```javascript
+```js
 import { io } from "socket.io-client";
 import CompactParser from "socket.io-compact-parser";
 
@@ -63,12 +70,12 @@ const socket = io({
 </script>
 ```
 
-## Why use this parser?
-
-The default Socket.IO parser uses JSON, which is text-based and can become quite large when sending complex objects or binary data. By using MessagePack via `socket.io-compact-parser`, your data is converted into a compact binary format, leading to:
-- Lower bandwidth usage.
-- Faster serialization/deserialization.
-- Better handling of binary data (Buffers/Uint8Arrays).
+## Features
+- Supports both ES Modules (ESM) and CommonJS (CJS).
+- Keyless binary encoding (Array-indexed).
+- Full Socket.IO Protocol v5 compatibility.
+- Automatic Buffer/Uint8Array handling via [notepack.io](https://www.npmjs.com/notepack.io).
+- Minimal browser footprint with [@socket.io/component-emitter](https://www.npmjs.com/@socket.io/component-emitter).
 
 ## License
 
@@ -76,4 +83,4 @@ This project is licensed under the MIT License.
 
 ## Contributors
 
-- **Wilco Joosen** ([computer-wilco](https://github.com/computer-wilco)) - Lead Developer
+- **Wilco Joosen** ([computer-wilco](https://github.com/computer-wilco))

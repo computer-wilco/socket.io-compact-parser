@@ -10,6 +10,6 @@ socket.on("connect", () => {
 });
 
 socket.on("pong", (data) => {
-  console.log("Get from Server: ", data);
+  console.info("Get from Server: ", data);
   socket.disconnect();
 });
