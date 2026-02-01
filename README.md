@@ -10,13 +10,18 @@ Instead of just shortening keys, this version maps `type`, `nsp`, `data`, and `i
 ## Performance (Latest Benchmarks)
 
 ### Size (bytes)
-┌─────────┬──────────┬──────────┬──────────┬──────────┐
-│ (index) │ case     │ JSON     │ MsgPack  │ Compact  │
-├─────────┼──────────┼──────────┼──────────┼──────────┤
-│ 0       │ 'small'  │ 29       │ 36       │ 22       │
-│ 1       │ 'medium' │ 133      │ 111      │ 97       │
-│ 2       │ 'large'  │ 10697    │ 6921     │ 6907     │
-└─────────┴──────────┴──────────┴──────────┴──────────┘
+#### Small Case
+- JSON: 29
+- MsgPack: 36
+- Compact: 22
+#### Medium Case
+- JSON: 133
+- MsgPack: 111
+- Compact: 97
+#### Large Case
+- JSON: 10697
+- MsgPack: 6921
+- Compact: 6907
 
 ### Speed (Encoding)
 - Small: 0.465ms
